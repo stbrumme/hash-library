@@ -8,6 +8,7 @@
 #include "md5.h"
 #include "sha1.h"
 #include "sha256.h"
+#include "keccak.h"
 
 #include <iostream>
 #include <fstream>
@@ -24,18 +25,21 @@ int main(int argc, char** argv)
   // parameters
   std::string filename  = argv[1];
   std::string algorithm = argc == 3 ? argv[2] : "";
-  bool computeCrc32  = algorithm.empty() || algorithm == "--crc";
-  bool computeMd5    = algorithm.empty() || algorithm == "--md5";
-  bool computeSha1   = algorithm.empty() || algorithm == "--sha1";
-  bool computeSha256 = algorithm.empty() || algorithm == "--sha256";
+  bool computeCrc32     = algorithm.empty() || algorithm == "--crc";
+  bool computeMd5       = algorithm.empty() || algorithm == "--md5";
+  bool computeSha1      = algorithm.empty() || algorithm == "--sha1";
+  bool computeSha256    = algorithm.empty() || algorithm == "--sha256";
+  bool computeKeccak256 = algorithm.empty() || algorithm == "--keccak256";
 
-  const size_t BufferSize = 1024*1024;
+  // each cycle processes about 1 MByte (divisible by 144 => improves Keccak performance)
+  const size_t BufferSize = 144*7*1024;
   char* buffer = new char[BufferSize];
 
   CRC32  digestCrc32;
   MD5    digestMd5;
   SHA1   digestSha1;
   SHA256 digestSha256;
+  Keccak digestKeccak256(Keccak::Keccak256);
 
   // open file
   std::ifstream file(filename.c_str(), std::ios::in | std::ios::binary);
@@ -48,28 +52,32 @@ int main(int argc, char** argv)
   while (!file.eof())
   {
     file.read(buffer, BufferSize);
-    std::streamsize numBytesRead = file.gcount();
+    std::size_t numBytesRead = size_t(file.gcount());
 
     if (computeCrc32)
-      digestCrc32 .add(buffer, numBytesRead);
+      digestCrc32    .add(buffer, numBytesRead);
     if (computeMd5)
-      digestMd5   .add(buffer, numBytesRead);
+      digestMd5      .add(buffer, numBytesRead);
     if (computeSha1)
-      digestSha1  .add(buffer, numBytesRead);
+      digestSha1     .add(buffer, numBytesRead);
     if (computeSha256)
-      digestSha256.add(buffer, numBytesRead);
+      digestSha256   .add(buffer, numBytesRead);
+    if (computeKeccak256)
+      digestKeccak256.add(buffer, numBytesRead);
   }
   file.close();
   delete[] buffer;
 
   if (computeCrc32)
-    std::cout << "CRC32:  " << digestCrc32 .getHash() << std::endl;
+    std::cout << "CRC32:     " << digestCrc32    .getHash() << std::endl;
   if (computeMd5)
-    std::cout << "MD5:    " << digestMd5   .getHash() << std::endl;
+    std::cout << "MD5:       " << digestMd5      .getHash() << std::endl;
   if (computeSha1)
-    std::cout << "SHA1:   " << digestSha1  .getHash() << std::endl;
+    std::cout << "SHA1:      " << digestSha1     .getHash() << std::endl;
   if (computeSha256)
-    std::cout << "SHA256: " << digestSha256.getHash() << std::endl;
+    std::cout << "SHA256:    " << digestSha256   .getHash() << std::endl;
+  if (computeKeccak256)
+    std::cout << "Keccak256: " << digestKeccak256.getHash() << std::endl;
 
   return 0;
 }
