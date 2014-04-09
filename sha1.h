@@ -6,6 +6,7 @@
 
 #pragma once
 
+//#include "hash.h"
 #include <string>
 
 // define fixed size integer types
@@ -33,7 +34,7 @@ typedef unsigned __int64 uint64_t;
       sha1.add(pointer to fresh data, number of new bytes);
     std::string myHash3 = sha1.getHash();
   */
-class SHA1
+class SHA1 //: public Hash
 {
 public:
   /// same as reset()

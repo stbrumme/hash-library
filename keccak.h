@@ -6,6 +6,7 @@
 
 #pragma once
 
+//#include "hash.h"
 #include <string>
 
 // define fixed size integer types
@@ -32,7 +33,7 @@ typedef unsigned __int64 uint64_t;
       keccak.add(pointer to fresh data, number of new bytes);
     std::string myHash3 = keccak.getHash();
   */
-class Keccak
+class Keccak //: public Hash
 {
 public:
   /// algorithm variants

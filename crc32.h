@@ -6,6 +6,7 @@
 
 #pragma once
 
+//#include "hash.h"
 #include <string>
 
 // define fixed size integer types
@@ -32,7 +33,7 @@ typedef unsigned __int32 uint32_t;
       crc32.add(pointer to fresh data, number of new bytes);
     std::string myHash3 = crc32.getHash();
   */
-class CRC32
+class CRC32 //: public Hash
 {
 public:
   /// same as reset()
@@ -47,7 +48,7 @@ public:
   void add(const void* data, size_t numBytes);
 
   /// return latest hash as 16 hex characters
-  std::string getHash() const;
+  std::string getHash();
 
   /// restart
   void reset();

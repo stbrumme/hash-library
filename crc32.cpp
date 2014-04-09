@@ -380,7 +380,7 @@ void CRC32::add(const void* data, size_t numBytes)
 
 
 /// return latest hash as 16 hex characters
-std::string CRC32::getHash() const
+std::string CRC32::getHash()
 {
   // convert hash to string
   static const char dec2hex[16+1] = "0123456789abcdef";

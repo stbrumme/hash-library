@@ -6,6 +6,7 @@
 
 #pragma once
 
+//#include "hash.h"
 #include <string>
 
 // define fixed size integer types
@@ -33,7 +34,7 @@ typedef unsigned __int64 uint64_t;
       md5.add(pointer to fresh data, number of new bytes);
     std::string myHash3 = md5.getHash();
   */
-class MD5
+class MD5 //: public Hash
 {
 public:
   /// same as reset()
