@@ -60,6 +60,7 @@ namespace
     return (a << c) | (a >> (32 - c));
   }
 
+#if defined(__BYTE_ORDER) && (__BYTE_ORDER != 0) && (__BYTE_ORDER == __BIG_ENDIAN)
   inline uint32_t swap(uint32_t x)
   {
 #if defined(__GNUC__) || defined(__clang__)
@@ -74,6 +75,7 @@ namespace
           ((x <<  8) & 0x00FF0000) |
            (x << 24);
   }
+#endif
 }
 
 
