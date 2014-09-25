@@ -330,14 +330,14 @@ void SHA256::processBuffer()
     addLength = extra + paddedLength - BlockSize;
 
   // must be big endian
-  *addLength++ = (msgBits >> 56) & 0xFF;
-  *addLength++ = (msgBits >> 48) & 0xFF;
-  *addLength++ = (msgBits >> 40) & 0xFF;
-  *addLength++ = (msgBits >> 32) & 0xFF;
-  *addLength++ = (msgBits >> 24) & 0xFF;
-  *addLength++ = (msgBits >> 16) & 0xFF;
-  *addLength++ = (msgBits >>  8) & 0xFF;
-  *addLength   =  msgBits        & 0xFF;
+  *addLength++ = (unsigned char)((msgBits >> 56) & 0xFF);
+  *addLength++ = (unsigned char)((msgBits >> 48) & 0xFF);
+  *addLength++ = (unsigned char)((msgBits >> 40) & 0xFF);
+  *addLength++ = (unsigned char)((msgBits >> 32) & 0xFF);
+  *addLength++ = (unsigned char)((msgBits >> 24) & 0xFF);
+  *addLength++ = (unsigned char)((msgBits >> 16) & 0xFF);
+  *addLength++ = (unsigned char)((msgBits >>  8) & 0xFF);
+  *addLength   = (unsigned char)( msgBits        & 0xFF);
 
   // process blocks
   processBlock(m_buffer);

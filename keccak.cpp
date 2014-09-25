@@ -60,7 +60,7 @@ namespace
 #if defined(__GNUC__) || defined(__clang__)
     return __builtin_bswap64(x);
 #endif
-#ifdef MSC_VER
+#ifdef _MSC_VER
     return _byteswap_uint64(x);
 #endif
 
