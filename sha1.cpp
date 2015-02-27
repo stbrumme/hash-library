@@ -1,6 +1,6 @@
 // //////////////////////////////////////////////////////////
 // sha1.cpp
-// Copyright (c) 2014 Stephan Brumme. All rights reserved.
+// Copyright (c) 2014,2015 Stephan Brumme. All rights reserved.
 // see http://create.stephan-brumme.com/disclaimer.html
 //
 
@@ -262,12 +262,30 @@ void SHA1::processBuffer()
 }
 
 
-/// return latest hash as 16 hex characters
+/// return latest hash as 40 hex characters
 std::string SHA1::getHash()
 {
-  // convert hash to string
-  static const char dec2hex[16+1] = "0123456789abcdef";
+  // compute hash (as raw bytes)
+  unsigned char rawHash[HashBytes];
+  getHash(rawHash);
 
+  // convert to hex string
+  std::string result;
+  result.reserve(2 * HashBytes);
+  for (int i = 0; i < HashBytes; i++)
+  {
+    static const char dec2hex[16+1] = "0123456789abcdef";
+    result += dec2hex[(rawHash[i] >> 4) & 15];
+    result += dec2hex[ rawHash[i]       & 15];
+  }
+
+  return result;
+}
+
+
+/// return latest hash as bytes
+void SHA1::getHash(unsigned char buffer[SHA1::HashBytes])
+{
   // save old hash if buffer is partially filled
   uint32_t oldHash[HashValues];
   for (int i = 0; i < HashValues; i++)
@@ -276,28 +294,17 @@ std::string SHA1::getHash()
   // process remaining bytes
   processBuffer();
 
-  // create hash string
-  char hashBuffer[HashValues*8+1];
-  size_t offset = 0;
+  unsigned char* current = buffer;
   for (int i = 0; i < HashValues; i++)
   {
-    hashBuffer[offset++] = dec2hex[(m_hash[i] >> 28) & 15];
-    hashBuffer[offset++] = dec2hex[(m_hash[i] >> 24) & 15];
-    hashBuffer[offset++] = dec2hex[(m_hash[i] >> 20) & 15];
-    hashBuffer[offset++] = dec2hex[(m_hash[i] >> 16) & 15];
-    hashBuffer[offset++] = dec2hex[(m_hash[i] >> 12) & 15];
-    hashBuffer[offset++] = dec2hex[(m_hash[i] >>  8) & 15];
-    hashBuffer[offset++] = dec2hex[(m_hash[i] >>  4) & 15];
-    hashBuffer[offset++] = dec2hex[ m_hash[i]        & 15];
+    *current++ = (m_hash[i] >> 24) & 0xFF;
+    *current++ = (m_hash[i] >> 16) & 0xFF;
+    *current++ = (m_hash[i] >>  8) & 0xFF;
+    *current++ =  m_hash[i]        & 0xFF;
 
     // restore old hash
     m_hash[i] = oldHash[i];
   }
-  // zero-terminated string
-  hashBuffer[offset] = 0;
-
-  // convert to std::string
-  return hashBuffer;
 }
 
 

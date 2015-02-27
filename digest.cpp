@@ -1,8 +1,10 @@
 // //////////////////////////////////////////////////////////
 // digest.cpp
-// Copyright (c) 2014 Stephan Brumme. All rights reserved.
+// Copyright (c) 2014,2015 Stephan Brumme. All rights reserved.
 // see http://create.stephan-brumme.com/disclaimer.html
 //
+
+// g++ -O3 digest.cpp crc32.cpp md5.cpp sha1.cpp sha256.cpp keccak.cpp sha3.cpp -o digest
 
 #include "crc32.h"
 #include "md5.h"
@@ -14,12 +16,13 @@
 #include <iostream>
 #include <fstream>
 
+
 int main(int argc, char** argv)
 {
   // syntax check
   if (argc < 2 || argc > 3)
   {
-    std::cout << "./digest filename [--md5|--sha1|--sha256|--crc|--keccak|--sha3]" << std::endl;
+    std::cout << "./digest filename [--crc|--md5|--sha1|--sha256|--keccak|--sha3]" << std::endl;
     return 1;
   }
 

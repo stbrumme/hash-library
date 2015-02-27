@@ -1,6 +1,6 @@
 // //////////////////////////////////////////////////////////
 // keccak.cpp
-// Copyright (c) 2014 Stephan Brumme. All rights reserved.
+// Copyright (c) 2014,2015 Stephan Brumme. All rights reserved.
 // see http://create.stephan-brumme.com/disclaimer.html
 //
 
@@ -222,11 +222,11 @@ void Keccak::processBuffer()
   // add a "1" byte
   m_buffer[offset++] = 1;
   // fill with zeros
-  while (offset < blockSize - 1)
+  while (offset < blockSize)
     m_buffer[offset++] = 0;
 
   // and add a single set bit
-  m_buffer[blockSize - 1] = 0x80;
+  m_buffer[blockSize - 1] |= 0x80;
 
   processBlock(m_buffer);
 }

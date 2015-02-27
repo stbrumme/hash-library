@@ -1,6 +1,6 @@
 // //////////////////////////////////////////////////////////
 // sha3.cpp
-// Copyright (c) 2014 Stephan Brumme. All rights reserved.
+// Copyright (c) 2014,2015 Stephan Brumme. All rights reserved.
 // see http://create.stephan-brumme.com/disclaimer.html
 //
 
@@ -173,6 +173,7 @@ void SHA3::add(const void* data, size_t numBytes)
 {
   const uint8_t* current = (const uint8_t*) data;
 
+  // copy data to buffer
   if (m_bufferSize > 0)
   {
     while (numBytes > 0 && m_bufferSize < m_blockSize)
@@ -215,18 +216,16 @@ void SHA3::add(const void* data, size_t numBytes)
 /// process everything left in the internal buffer
 void SHA3::processBuffer()
 {
-  unsigned int blockSize = 200 - 2 * (m_bits / 8);
-
   // add padding
   size_t offset = m_bufferSize;
   // add a "1" byte
   m_buffer[offset++] = 0x06;
   // fill with zeros
-  while (offset < blockSize - 1)
+  while (offset < m_blockSize)
     m_buffer[offset++] = 0;
 
   // and add a single set bit
-  m_buffer[blockSize - 1] = 0x80;
+  m_buffer[offset - 1] |= 0x80;
 
   processBlock(m_buffer);
 }
@@ -245,6 +244,7 @@ std::string SHA3::getHash()
   unsigned int hashLength = m_bits / 64;
 
   std::string result;
+  result.reserve(m_bits / 4);
   for (unsigned int i = 0; i < hashLength; i++)
     for (unsigned int j = 0; j < 8; j++) // 64 bits => 8 bytes
     {
