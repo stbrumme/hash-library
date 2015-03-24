@@ -12,6 +12,7 @@
 #include "../sha1.h"
 #include "../sha256.h"
 #include "../sha3.h"
+#include "../keccak.h"
 
 #include "../hmac.h"
 
@@ -169,6 +170,22 @@ int check(const Container& input, const std::string& expectedResult)
 }
 
 
+// same as above for SHA3/Keccak with variable hash size
+template <typename HashMethod, int HashSize, typename Container>
+int check(const Container& input, const std::string& expectedResult)
+{
+  HashMethod hasher = HashMethod(typename HashMethod::Bits(HashSize));
+  hasher.add(&input[0], input.size());
+  std::string hash = hasher.getHash();
+  if (hash == expectedResult)
+    return 0;
+
+  // error
+  std::cerr << "hash/" << HashSize << " failed ! expected \"" << expectedResult << "\" but library computed \"" << hash << "\"" << std::endl;
+  return 1;
+}
+
+
 // same as above but convert input from hex to raw bytes first (can contain zeros)
 template <typename HashMethod, typename InputContainer, typename KeyContainer>
 int checkHmac(const InputContainer& input, const KeyContainer& key, const std::string& expectedResult)
@@ -232,14 +249,34 @@ int main(int argc, char** argv)
   errors += check<SHA3>(abc896bits, "916f6061fe879741ca6469b43971dfdb28b1a32dc36cb3254e812be27aad1d18");
   errors += check<SHA3>(million,    "5c8875ae474a3634ba4fd55ec85bffd661f32aca75c6d699d0cdcb6c115891c1");
 
-  // next test cases produced an error until February 2015, reported by Gary Singer
+  // next test case produced an error until February 2015, reported by Gary Singer
   // note: automatic test case 71 failed, too, same bug
   std::cout << "test SHA3/512 ...\n";
   SHA3 sha3_512(SHA3::Bits512);
   std::vector<unsigned char> sha3bug = hex2bin("13bd2811f6ed2b6f04ff3895aceed7bef8dcd45eb121791bc194a0f806206bffc3b9281c2b308b1a729ce008119dd3066e9378acdcc50a98a82e20738800b6cddbe5fe9694ad6d");
   if (sha3_512(sha3bug.data(), sha3bug.size())
       != "def4ab6cda8839729a03e000846604b17f03c5d5d7ec23c483670a13e11573c1e9347a63ec69a5abb21305f9382ecdaaabc6850f92840e86f88f4dabfcd93cc0")
-    std::cerr << "SHA3 bug present" << std::endl;
+  {
+    std::cerr << "SHA3/512 bug present" << std::endl;
+    errors++;
+  }
+
+  // hex conversion failed for SHA3/224 (last eight hex digits [32 bits] were missing)
+  // reported by Alexander Moch in March 2015
+  std::cout << "test SHA3/224 ...\n";
+  SHA3 sha3_224(SHA3::Bits224);
+  if (check<SHA3, SHA3::Bits224>(empty, "6b4e03423667dbb73b6e15454f0eb1abd4597f9a1b078e3f5b5a6bc7"))
+  {
+    std::cerr << "SHA3/224 bug present" << std::endl;
+    errors++;
+  }
+  std::cout << "test Keccak/224 ...\n";
+  Keccak keccak224(Keccak::Keccak224);
+  if (keccak224("") != "f71837502ba8e10837bdd8d365adb85591895602fc552b48b7390abd")
+  {
+    std::cerr << "Keccak/224 bug present" << std::endl;
+    errors++;
+  }
 
   // check all automatically generated testsets
   std::cout << "generic testsets (CRC32,MD5,SHA1,SHA256,SHA3) ..." << std::endl;
