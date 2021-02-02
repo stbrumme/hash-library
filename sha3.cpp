@@ -11,6 +11,8 @@
 #include <endian.h>
 #endif
 
+#include <iostream>
+
 
 /// same as reset()
 SHA3::SHA3(Bits bits)
@@ -149,7 +151,7 @@ void SHA3::processBlock(const void* data)
                       m_hash[ 1] = rotateLeft(last, 44);
 
     // Chi
-    for (unsigned int j = 0; j < 25; j += 5)
+    for (unsigned int j = 0; j < StateSize; j += 5)
     {
       // temporaries
       uint64_t one = m_hash[j];
@@ -234,6 +236,11 @@ void SHA3::processBuffer()
 /// return latest hash as 16 hex characters
 std::string SHA3::getHash()
 {
+  // save hash state
+  uint64_t oldHash[StateSize];
+  for (unsigned int i = 0; i < StateSize; i++)
+    oldHash[i] = m_hash[i];
+
   // process remaining bytes
   processBuffer();
 
@@ -266,6 +273,10 @@ std::string SHA3::getHash()
 
     processed += 8;
   }
+
+  // restore state
+  for (unsigned int i = 0; i < StateSize; i++)
+    m_hash[i] = oldHash[i];
 
   return result;
 }
