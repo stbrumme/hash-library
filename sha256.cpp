@@ -1,6 +1,6 @@
 // //////////////////////////////////////////////////////////
 // sha256.cpp
-// Copyright (c) 2014,2015 Stephan Brumme. All rights reserved.
+// Copyright (c) 2014,2015,2021 Stephan Brumme. All rights reserved.
 // see http://create.stephan-brumme.com/disclaimer.html
 //
 
@@ -10,6 +10,8 @@
 #ifndef _MSC_VER
 #include <endian.h>
 #endif
+
+//#define SHA2_224_SEED_VECTOR
 
 
 /// same as reset()
@@ -26,6 +28,8 @@ void SHA256::reset()
   m_bufferSize = 0;
 
   // according to RFC 1321
+  // "These words were obtained by taking the first thirty-two bits of the
+  //  fractional parts of the square roots of the first eight prime numbers"
   m_hash[0] = 0x6a09e667;
   m_hash[1] = 0xbb67ae85;
   m_hash[2] = 0x3c6ef372;
@@ -34,6 +38,19 @@ void SHA256::reset()
   m_hash[5] = 0x9b05688c;
   m_hash[6] = 0x1f83d9ab;
   m_hash[7] = 0x5be0cd19;
+
+#ifdef SHA2_224_SEED_VECTOR
+  // if you want SHA2-224 instead then use these seeds
+  // and throw away the last 32 bits of getHash
+  m_hash[0] = 0xc1059ed8;
+  m_hash[1] = 0x367cd507;
+  m_hash[2] = 0x3070dd17;
+  m_hash[3] = 0xf70e5939;
+  m_hash[4] = 0xffc00b31;
+  m_hash[5] = 0x68581511;
+  m_hash[6] = 0x64f98fa7;
+  m_hash[7] = 0xbefa4fa4;
+#endif
 }
 
 
