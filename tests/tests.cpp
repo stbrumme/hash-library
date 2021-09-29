@@ -216,7 +216,7 @@ std::vector<unsigned char> hex2bin(const std::string& hex)
 
 
 // here we go !
-int main(int argc, char** argv)
+int main()
 {
   int errors = 0;
 

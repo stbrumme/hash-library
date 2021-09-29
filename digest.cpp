@@ -42,10 +42,6 @@ int main(int argc, char** argv)
   Keccak digestKeccak(Keccak::Keccak256);
   SHA3   digestSha3  (SHA3  ::Bits256);
 
-  // each cycle processes about 1 MByte (divisible by 144 => improves Keccak/SHA3 performance)
-  const size_t BufferSize = 144*7*1024;
-  char* buffer = new char[BufferSize];
-
   // select input source: either file or standard-in
   std::ifstream file;
   std::istream* input = NULL;
@@ -66,6 +62,10 @@ int main(int argc, char** argv)
 
     input = &file;
   }
+
+  // each cycle processes about 1 MByte (divisible by 144 => improves Keccak/SHA3 performance)
+  const size_t BufferSize = 144*7*1024;
+  char* buffer = new char[BufferSize];
 
   // process file
   while (*input)
