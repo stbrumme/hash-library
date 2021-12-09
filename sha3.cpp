@@ -56,7 +56,7 @@ namespace
     return (x << numBits) | (x >> (64 - numBits));
   }
 
-  /// convert litte vs big endian
+  /// convert little vs big endian
   inline uint64_t swap(uint64_t x)
   {
 #if defined(__GNUC__) || defined(__clang__)
