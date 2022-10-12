@@ -296,7 +296,7 @@ void MD5::processBuffer()
   if (paddedLength < BlockSize)
     addLength = m_buffer + paddedLength;
   else
-    addLength = extra + paddedLength - BlockSize;
+    addLength = extra + (paddedLength - BlockSize);
 
   // must be little endian
   *addLength++ = msgBits & 0xFF; msgBits >>= 8;
