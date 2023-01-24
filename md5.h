@@ -70,7 +70,7 @@ private:
   /// valid bytes in m_buffer
   size_t   m_bufferSize;
   /// bytes not processed yet
-  uint8_t  m_buffer[BlockSize];
+  uint8_t  m_buffer[BlockSize] = {};
 
   enum { HashValues = HashBytes / 4 };
   /// hash, stored as integers
