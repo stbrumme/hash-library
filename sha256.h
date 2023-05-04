@@ -20,6 +20,8 @@ typedef unsigned __int64 uint64_t;
 #include <stdint.h>
 #endif
 
+extern "C" void sha256_compress(const uint8_t[64], uint32_t[8]);
+
 
 /// compute SHA256 hash
 /** Usage:
@@ -60,8 +62,6 @@ public:
   void reset();
 
 private:
-  /// process 64 bytes
-  void processBlock(const void* data);
   /// process everything left in the internal buffer
   void processBuffer();
 

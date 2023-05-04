@@ -9,6 +9,7 @@ In a nutshell:
 - no external dependencies, small code size
 - can work chunk-wise (for example when reading streams block-by-block)
 - portable: supports Windows and Linux, tested on Little Endian and Big Endian CPUs
+- pluggable: (optional) supports platform specific implementations for maximum performance
 - roughly as fast as Linux core hashing functions
 - open source, zlib license
 
