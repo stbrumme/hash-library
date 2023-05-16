@@ -374,7 +374,11 @@ std::string SHA256::getHash()
   // convert to hex string
   std::string result;
   result.reserve(2 * HashBytes);
+#ifdef SHA2_224_SEED_VECTOR
+  for (int i = 0; i < HashBytes - 4; i++)
+#else
   for (int i = 0; i < HashBytes; i++)
+#endif
   {
     static const char dec2hex[16+1] = "0123456789abcdef";
     result += dec2hex[(rawHash[i] >> 4) & 15];
