@@ -65,15 +65,14 @@ namespace
   {
 #if defined(__GNUC__) || defined(__clang__)
     return __builtin_bswap32(x);
-#endif
-#ifdef MSC_VER
+#elif defined(_MSC_VER)
     return _byteswap_ulong(x);
-#endif
-
+#else
     return (x >> 24) |
           ((x >>  8) & 0x0000FF00) |
           ((x <<  8) & 0x00FF0000) |
            (x << 24);
+#endif
   }
 
   // mix functions for processBlock()

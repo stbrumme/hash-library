@@ -59,11 +59,9 @@ namespace
   {
 #if defined(__GNUC__) || defined(__clang__)
     return __builtin_bswap64(x);
-#endif
-#ifdef _MSC_VER
+#elif defined(_MSC_VER)
     return _byteswap_uint64(x);
-#endif
-
+#else
     return  (x >> 56) |
            ((x >> 40) & 0x000000000000FF00ULL) |
            ((x >> 24) & 0x0000000000FF0000ULL) |
@@ -72,6 +70,7 @@ namespace
            ((x << 24) & 0x0000FF0000000000ULL) |
            ((x << 40) & 0x00FF000000000000ULL) |
             (x << 56);
+#endif
   }
 
 
